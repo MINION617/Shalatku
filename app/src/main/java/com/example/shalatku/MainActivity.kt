@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.shalatku.ui.theme.ShalatkuTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,9 +37,16 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ShalatkuApp() {
+fun ShalatkuApp(viewModel: SalatKuViewModel = viewModel()) {
     var selected by remember { mutableStateOf(0) }
     val donePrayers = remember { mutableStateListOf<String>() }
+
+    TasbihScreen(
+        count = viewModel.tasbihCount,
+        onIncrement = viewModel::incrementTasbih,
+        onReset = viewModel::resetTasbih,
+        modifier = Modifier.padding(innerPadding)
+    )
 
     Scaffold(
         bottomBar = {

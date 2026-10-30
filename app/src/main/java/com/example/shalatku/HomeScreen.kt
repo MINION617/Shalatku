@@ -14,9 +14,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
-fun HomeScreen(prayers: List<Prayer>, modifier: Modifier = Modifier) {
+fun HomeScreen(
+    prayers: List<Prayer>,
+    prayerTimes: PrayerTimesUiState,
+    onRefreshPrayerTimes: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(16.dp),
@@ -26,8 +32,11 @@ fun HomeScreen(prayers: List<Prayer>, modifier: Modifier = Modifier) {
             Text("Shalatku", style = MaterialTheme.typography.headlineMedium)
             Text("Today's prayer times", style = MaterialTheme.typography.bodyMedium)
         }
-        items(prayers, key = { it.name }) { prayer ->
-            PrayerCard(prayer)
+        item {
+            PrayerTimesSection(
+                state = prayerTimes,
+                onRefresh = onRefreshPrayerTimes
+            )
         }
     }
 }

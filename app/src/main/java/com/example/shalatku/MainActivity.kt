@@ -1,5 +1,6 @@
 package com.example.shalatku
 
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,6 +38,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ShalatkuApp(viewModel: SalatKuViewModel = viewModel()) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var selected by rememberSaveable { mutableIntStateOf(0) }
 
     Scaffold(
@@ -65,18 +67,25 @@ fun ShalatkuApp(viewModel: SalatKuViewModel = viewModel()) {
     ) { padding ->
         val contentModifier = Modifier.padding(padding)
         when (selected) {
-            0 -> HomeScreen(samplePrayers, contentModifier)
+            0 -> HomeScreen(
+                prayers = uiState.prayers,
+                // argumen Home milikmu yang lain tetap (selectedDay, onSelectDay, dst.)
+                prayerTimes = uiState.prayerTimes,
+                onRefreshPrayerTimes = viewModel::loadPrayerTimes,
+                modifier = contentModifier
+            )
             1 -> TrackerScreen(
-                prayers = samplePrayers,
-                donePrayers = viewModel.donePrayers,
+                prayers = uiState.prayers,
+                donePrayers = uiState.donePrayers,
+                doneCount = uiState.doneCount,
                 onToggle = viewModel::togglePrayer,
                 onClear = viewModel::clearPrayers,
                 modifier = contentModifier
             )
             2 -> TasbihScreen(
-                count = viewModel.tasbihCount,
-                rounds = viewModel.completedRounds,
-                roundSize = viewModel.roundSize,
+                count = uiState.tasbihCount,
+                rounds = uiState.completedRounds,
+                roundSize = uiState.roundSize,
                 roundOptions = viewModel.roundOptions,
                 onIncrement = viewModel::incrementTasbih,
                 onReset = viewModel::resetTasbih,
